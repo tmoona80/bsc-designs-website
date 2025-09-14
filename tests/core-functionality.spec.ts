@@ -16,24 +16,42 @@ test.describe('Core Functionality Tests', () => {
     await expect(page.getByRole('heading', { name: /custom merchandise printing/i })).toBeVisible();
   });
 
-  test('contact form is visible and has required fields', async ({ page }) => {
+  test('contact form is visible and has required fields', async ({ page, browserName }) => {
     await page.goto('/');
     
-    // Scroll to contact section
-    await page.locator('#contact').scrollIntoViewIfNeeded();
+    // Wait for page to fully load
+    await page.waitForLoadState('networkidle');
+    
+    // Scroll to contact section with error handling
+    const contactSection = page.locator('#contact');
+    await expect(contactSection).toBeAttached();
+    
+    try {
+      await contactSection.scrollIntoViewIfNeeded({ timeout: 10000 });
+    } catch (error) {
+      // Fallback scroll method
+      await page.evaluate(() => {
+        const element = document.querySelector('#contact');
+        if (element) {
+          element.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        }
+      });
+    }
     
     // Wait a moment for mobile rendering
     await page.waitForTimeout(1000);
     
     // Click "Request a Quote" button in the contact section to show the form
-    await page.locator('#contact').getByRole('button', { name: /request a quote/i }).click();
+    const quoteButton = contactSection.getByRole('button', { name: /request a quote/i });
+    await expect(quoteButton).toBeVisible({ timeout: 10000 });
+    await quoteButton.click();
     
     // Wait for form to appear
     await page.waitForTimeout(1000);
     
     // Check for form elements within the form
     const form = page.locator('form');
-    await expect(form.getByLabel(/name/i)).toBeVisible();
+    await expect(form.getByLabel(/name/i)).toBeVisible({ timeout: 10000 });
     await expect(form.getByLabel(/email/i)).toBeVisible();
     await expect(form.getByLabel(/service needed/i)).toBeVisible();
     await expect(form.getByRole('button', { name: /get quote/i })).toBeVisible();
@@ -86,19 +104,39 @@ test.describe('Core Functionality Tests', () => {
     await expect(page.getByText(/thank you/i)).toBeVisible({ timeout: 10000 });
   });
 
-  test('phone number and email are displayed correctly', async ({ page }) => {
+  test('phone number and email are displayed correctly', async ({ page, browserName }) => {
     await page.goto('/');
     
-    // Navigate to contact section and show form
-    await page.locator('#contact').scrollIntoViewIfNeeded();
+    // Wait for page to fully load
+    await page.waitForLoadState('networkidle');
+    
+    // Navigate to contact section with error handling
+    const contactSection = page.locator('#contact');
+    await expect(contactSection).toBeAttached();
+    
+    try {
+      await contactSection.scrollIntoViewIfNeeded({ timeout: 10000 });
+    } catch (error) {
+      // Fallback scroll method
+      await page.evaluate(() => {
+        const element = document.querySelector('#contact');
+        if (element) {
+          element.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        }
+      });
+    }
+    
     await page.waitForTimeout(1000);
-    await page.locator('#contact').getByRole('button', { name: /request a quote/i }).click();
+    
+    // Click button to show form
+    const quoteButton = contactSection.getByRole('button', { name: /request a quote/i });
+    await expect(quoteButton).toBeVisible({ timeout: 10000 });
+    await quoteButton.click();
     await page.waitForTimeout(1000);
     
     // Check for contact information in the form area
-    const contactCard = page.locator('#contact');
-    await expect(contactCard.getByText('(416) 788-3355')).toBeVisible();
-    await expect(contactCard.getByText('info@bscdesigns.ca')).toBeVisible();
+    await expect(contactSection.getByText('(416) 788-3355')).toBeVisible({ timeout: 10000 });
+    await expect(contactSection.getByText('info@bscdesigns.ca')).toBeVisible();
   });
 
   test('social media links are present', async ({ page }) => {
