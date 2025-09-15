@@ -7,7 +7,7 @@ export default function ProductsShowcase() {
   const products = [
     {
       name: "T-Shirts",
-      image: "/images/black-tshirt-perfect-match.png",
+      image: "/images/newblackT_transparent.png",
       description: "Premium cotton tees for any design",
     },
     {
