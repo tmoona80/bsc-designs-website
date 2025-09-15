@@ -36,7 +36,7 @@
 - **Custom domain**: www.bscdesigns.ca
 
 ### Form Handling
-- **Formspree** endpoint: `https://formspree.io/f/xnnbrllp`
+- **Formspree** endpoint: `https://formspree.io/f/xqadopkq`
 - Emails sent to: `info@bscdesigns.ca`
 - Contact form integrated in main page
 
